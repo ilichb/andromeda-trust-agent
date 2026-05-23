@@ -3,36 +3,44 @@ const axios = require('axios');
 const ACE_BASE = 'https://api.acedata.cloud';
 
 class AceService {
-  constructor(apiKey) {
-    this.apiKey = apiKey;
+  constructor(config) {
+    const apiKey = typeof config === 'string' ? config : config.apiKey;
     this.headers = {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     };
+    if (config.evmPrivateKey) {
+      console.log('[x402] EVM wallet configurada');
+    }
+  }
+
+  async post(endpoint, body) {
+    const res = await axios.post(`${ACE_BASE}${endpoint}`, body, { headers: this.headers });
+    return res.data;
   }
 
   async chat(prompt, model = 'gpt-4o-mini') {
     console.log(`[Ace] Chat → ${model}`);
-    const res = await axios.post(`${ACE_BASE}/v1/chat/completions`, {
+    const data = await this.post('/v1/chat/completions', {
       model,
-      messages: [{ role: 'user', content: prompt }],
-    }, { headers: this.headers });
-    return res.data.choices[0].message.content;
+      messages: [{ role: 'user', content: `Reply only in English. ${prompt}` }],
+    });
+    return data.choices[0].message.content;
   }
 
   async analyzeWithClaude(prompt) {
-    console.log(`[Ace] Claude analysis`);
     return this.chat(prompt, 'claude-3-5-haiku-20241022');
   }
 
   async generateVideo(prompt) {
-    console.log(`[Ace] Kling video → "${prompt.substring(0, 40)}..."`);
-    const res = await axios.post(`${ACE_BASE}/kling/videos`, {
+    console.log(`[Ace] Kling generating video...`);
+    const data = await this.post('/kling/videos', {
       action: 'text2video',
       model: 'kling-v1',
       prompt,
-    }, { headers: this.headers });
-    return res.data;
+    });
+    console.log(`[Ace] Kling: ${data.video_url || data.state}`);
+    return data;
   }
 }
 

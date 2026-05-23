@@ -2,8 +2,12 @@ const AceService = require('../services/ace');
 
 class AutonomousAgent {
   constructor(config) {
-    this.ace = new AceService(config.aceApiKey);
-    this.agentWallet = config.agentWallet;
+    this.ace = new AceService({
+      apiKey: config.aceApiKey,
+      evmPrivateKey: config.evmPrivateKey,
+    });
+    this.agentWallet = config.agentWallet;   // Solana SAP
+    this.evmWallet = config.evmWallet;       // Base USDC
     this.results = [];
   }
 
@@ -32,13 +36,15 @@ class AutonomousAgent {
     console.log('\n[Step 3] Kling generating visual report...');
     const videoPrompt = `Professional AI agent dashboard showing autonomous task execution, data streams, and blockchain transactions for: ${task}`;
     const video = await this.ace.generateVideo(videoPrompt);
-    console.log(`✅ Video: ${video.video_url}`);
-    this.results.push({ step: 'video', model: 'kling-v1', output: video.video_url });
+    const videoResult = video.video_url || video.message || JSON.stringify(video);
+    console.log(`✅ Kling: ${videoResult}`);
+    this.results.push({ step: 'video', model: 'kling-v1', output: videoResult });
 
     // Final report
     console.log('\n📊 === WORKFLOW COMPLETE ===');
     console.log(`Services used: ${this.results.length}`);
-    console.log(`Agent wallet: ${this.agentWallet}`);
+    console.log(`Solana agent wallet: ${this.agentWallet}`);
+    console.log(`EVM payment wallet:  ${this.evmWallet}`);
     this.results.forEach(r => console.log(`  ✓ ${r.step} → ${r.model}`));
     
     return this.results;
