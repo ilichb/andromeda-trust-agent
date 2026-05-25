@@ -17,7 +17,9 @@
 
 <br/>
 
-An autonomous AI agent registered on **Synapse Agent Protocol mainnet** that orchestrates multi-model AI workflows and settles every payment **on-chain via x402** — no human in the loop, no traditional API billing.
+An autonomous AI agent that orchestrates multi-model AI workflows without human intervention or traditional API billing. 
+
+**The agent is registered on Solana SAP mainnet, but every AI API payment is settled on Base mainnet using USDC via x402 – true cross‑chain autonomy.**
 
 </div>
 

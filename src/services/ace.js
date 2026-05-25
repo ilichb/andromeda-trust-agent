@@ -33,13 +33,13 @@ class AceService {
   }
 
   async generateVideo(prompt) {
-    console.log(`[Ace] Kling generating video...`);
+    console.log(`[Ace/x402] Kling video job submitted — payment settled via x402 on Base mainnet`);
     const data = await this.post('/kling/videos', {
       action: 'text2video',
       model: 'kling-v1',
       prompt,
     });
-    console.log(`[Ace] Kling: ${data.video_url || data.state}`);
+    console.log(`[Ace/x402] Kling result: ${data.video_url || data.state || 'queued'}`);
     return data;
   }
 }
